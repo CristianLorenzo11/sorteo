@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Sorteo de Nombres</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <style>
+    /* Tus estilos personalizados */
     body {
         font-family: Arial, sans-serif;
         background-color: #000;
@@ -28,7 +31,7 @@
         max-width: 300px;
         margin-bottom: 10px;
         border-radius: 50%; /* Hace que el logo sea redondeado */
-                padding: 5px; /* Espacio alrededor del logo */
+        padding: 5px; /* Espacio alrededor del logo */
     }
     input[type="text"], input[type="number"], input[type="button"] {
         display: block;
@@ -89,8 +92,29 @@
     .remove-button:hover {
         background-color: #ff3d3d;
     }
-    h2{
+    h2 {
         text-align: center;
+    }
+    .custom-modal-content {
+        background-color: #000;
+        color: #fdfcfc;
+    }
+    .custom-modal-header, .custom-modal-footer {
+        border: none;
+    }
+    .custom-modal-title {
+        color: #f7f3f3;
+    }
+    .custom-modal-close {
+        color: #f8f6f6;
+    }
+    .custom-modal-button {
+        background-color: #e50914;
+        border: none;
+        color: #fff;
+    }
+    .custom-modal-button:hover {
+        background-color: #ff3d3d;
     }
 </style>
 </head>
@@ -98,7 +122,7 @@
 
 <div id="container">
     <div id="header">
-        <img id="logo" src="lux.jpeg" alt="Logo">
+        <img id="logo" src="sweet.png" alt="Logo">
         <h2>Sorteo</h2>
         <input type="text" id="sorteoInput" placeholder="Nombre del Sorteo">
     </div>
@@ -112,47 +136,72 @@
     <p id="winnersResult"></p>
 </div>
 
+     <!-- Modal -->
+     <div class="modal fade" id="sorteoModal" tabindex="-1" role="dialog" aria-labelledby="sorteoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content custom-modal-content">
+                <div class="modal-header custom-modal-header">
+                    <h5 class="modal-title custom-modal-title" id="sorteoModalLabel">Resultado del Sorteo</h5>
+                    <button type="button" class="close custom-modal-close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body custom-modal-body">
+                    <p id="countdownText"></p>
+                    <p id="winnerText"></p>
+                </div>
+                <div class="modal-footer custom-modal-footer">
+                    <button type="button" class="btn btn-secondary custom-modal-button" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 <script>
     let names = [];
-    let counter = 1;
+let counter = 1;
 
-    function addNames() {
-        const nameInput = document.getElementById("nameInput");
-        const namesInputValue = nameInput.value.trim();
-        if (namesInputValue !== "") {
-            const newNames = namesInputValue.split(/\d+\.\s*/).map(name => name.trim()).filter(name => name !== "");
-            names = names.concat(newNames);
-            nameInput.value = "";
+function addNames() {
+    const nameInput = document.getElementById("nameInput");
+    const namesInputValue = nameInput.value.trim();
+    if (namesInputValue !== "") {
+        const newNames = namesInputValue.split(/\d+\.\s*/).map(name => name.trim()).filter(name => name !== "");
+        names = names.concat(newNames);
+        nameInput.value = "";
+        displayNames();
+    }
+}
+
+function displayNames() {
+    const namesList = document.getElementById("namesList");
+    namesList.innerHTML = "";
+    counter = 1;
+    names.forEach((name, index) => {
+        const li = document.createElement("li");
+        const nameWithNumber = document.createElement("span");
+        nameWithNumber.textContent = `${counter++}. ${name}`;
+        li.appendChild(nameWithNumber);
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "x";
+        removeButton.className = "remove-button";
+        removeButton.addEventListener("click", () => {
+            names.splice(index, 1);
             displayNames();
-        }
-    }
-
-    function displayNames() {
-        const namesList = document.getElementById("namesList");
-        namesList.innerHTML = "";
-        counter = 1;
-        names.forEach((name, index) => {
-            const li = document.createElement("li");
-            const nameWithNumber = document.createElement("span");
-            nameWithNumber.textContent = `${counter++}. ${name}`;
-            li.appendChild(nameWithNumber);
-            const removeButton = document.createElement("button");
-            removeButton.textContent = "x";
-            removeButton.className = "remove-button";
-            removeButton.addEventListener("click", () => {
-                names.splice(index, 1);
-                displayNames();
-            });
-            li.appendChild(removeButton);
-            namesList.appendChild(li);
         });
-    }
+        li.appendChild(removeButton);
+        namesList.appendChild(li);
+    });
+}
 
-    function drawWinners() {
+function drawWinners() {
     const winnersInput = document.getElementById("winnersInput");
     const numWinners = parseInt(winnersInput.value);
-    const winnersResult = document.getElementById("winnersResult");
-    winnersResult.textContent = "";
+    const winnerText = document.getElementById("winnerText");
+    winnerText.textContent = "";
 
     const sorteoInput = document.getElementById("sorteoInput").value.trim();
     
@@ -163,7 +212,7 @@
 
     if (numWinners > 0 && numWinners <= names.length) {
         const shuffledNames = shuffleArray(names);
-        winnersResult.textContent = `El ganador del sorteo "${sorteoInput}" es:`;
+        winnerText.textContent = `El ganador del sorteo "${sorteoInput}" es:`;
         const winnersList = document.createElement("ul");
         for (let i = 0; i < numWinners; i++) {
             const winner = shuffledNames[i];
@@ -171,43 +220,37 @@
             li.textContent = `${i + 1}. ${winner}`;
             winnersList.appendChild(li);
         }
-        winnersResult.appendChild(winnersList);
+        winnerText.appendChild(winnersList);
     } else {
         alert("La cantidad de ganadores debe ser mayor que cero y menor o igual que la cantidad de nombres ingresados.");
     }
 }
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+function startCountdown() {
+    let count = 3;
+    $('#sorteoModal').modal('show');
+    const countdownText = document.getElementById("countdownText");
+    const countdownInterval = setInterval(() => {
+        if (count === 0) {
+            clearInterval(countdownInterval);
+            countdownText.textContent = "";  // Limpiar el texto del contador
+            drawWinners();
+        } else {
+            countdownText.textContent = `Realizando sorteo en ${count} segundos...`;
+            count--;
         }
-        return array;
-    }
+    }, 1000);
+}
 
-    function handleKeyDown(event) {
-        if (event.keyCode === 13) {
-            if (event.target.tagName === "INPUT") {
-                event.preventDefault();
-                addName();
-            }
-        }
-    }
-
-    function startCountdown() {
-        let count = 3;
-        const countdownInterval = setInterval(() => {
-            if (count === 0) {
-                clearInterval(countdownInterval);
-                drawWinners();
-            } else {
-                document.getElementById("winnersResult").textContent = `Realizando sorteo en ${count} segundos...`;
-                count--;
-            }
-        }, 1000);
-    }
-</script>
+    </script>
 
 </body>
 </html>
