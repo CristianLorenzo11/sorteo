@@ -7,7 +7,7 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background: linear-gradient(to right, #080808, #0502c5); 
+        background: linear-gradient(to right, #080808, #9802c5); 
         background-size: cover; 
         background-position: center;
         background-repeat: no-repeat;
@@ -20,7 +20,7 @@
         margin: 50px auto;
         padding: 20px;
         border-radius: 10px;
-        background: linear-gradient(to right, #0592f0, #0502c5); 
+        background: linear-gradient(to right, #0592f0, #c502bb); 
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
     #header {
@@ -135,8 +135,8 @@
     font-weight: bold; /* Hacer el número grueso */
     color: #ff3d3d; /* Color rojo vibrante */
     text-shadow: 2px 2px 0 #000, /* Sombra para el efecto 3D */
-                 4px 4px 0 #333, 
-                 6px 6px 0 #666;
+                 4px 4px 0 #161515, 
+                 6px 6px 0 #080707;
     text-align: center; /* Centrar el texto */
     margin-top: 20px; /* Añadir espacio superior */
     transition: transform 0.3s ease; /* Animación suave */
@@ -156,7 +156,6 @@
         <h2>Sorteo</h2>
         <input type="text" id="sorteoInput" placeholder="Nombre del Sorteo">
     </div>
-    
     <input type="number" id="winnersInput" placeholder="Cantidad de Ganadores">
     <input type="text" id="nameInput" placeholder="Ingrese uno o más nombres (separados por saltos de línea)">
     <input type="button" value="Agregar Nombre" onclick="addNames()">
